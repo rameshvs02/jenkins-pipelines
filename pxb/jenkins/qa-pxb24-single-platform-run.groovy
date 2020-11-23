@@ -85,7 +85,7 @@ pipeline {
                     export XTRABACKUP_TARGET='${XTRABACKUP_TARGET}'
                     export XTRABACKUP_TARGET_VERSION='${XTRABACKUP_TARGET_VERSION}'
                     export BOOTSTRAP_URL='${BOOTSTRAP_URL}'
-                    
+
                     # sudo is needed for better node recovery after compilation failure
                     # if building failed on compilation stage directory will have files owned by docker user
                     sudo git reset --hard
