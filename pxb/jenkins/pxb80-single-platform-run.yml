@@ -73,4 +73,4 @@
             - 'master'
             wipe-workspace: false
       lightweight-checkout: true
-      script-path: pxb/jenkins/pxb80-single-platform-run.groovy
+      script-path: pxb/docker/pxb80-single-platform-run.groovy

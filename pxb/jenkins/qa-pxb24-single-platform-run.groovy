@@ -17,7 +17,7 @@ pipeline {
             description: 'OS version for compilation',
             name: 'OS_LABEL')
         choice(
-            choices: 'innodb55\ninnodb56\ninnodb57\nxtradb55\nxtradb56\nxtradb57\ngalera56\ngalera57',
+            choices: 'xtradb57',
             description: 'MySQL version for QA run',
             name: 'XTRABACKUP_TARGET')
         string(
@@ -63,8 +63,8 @@ pipeline {
     stages {
         stage('Ubuntu Xenial') {
             agent {
-                    label $OS_LABEL
-                    }
+                    label '$OS_LABEL'
+                  }
             steps {
                 git branch: 'master', url: 'https://github.com/rameshvs02/jenkins-pipelines'
                 echo 'Checkout PXB24 sources'
