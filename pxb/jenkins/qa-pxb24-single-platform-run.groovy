@@ -68,7 +68,7 @@ pipeline {
             steps {
                 git branch: 'master', url: 'https://github.com/rameshvs02/jenkins-pipelines'
                 echo 'Checkout PXB24 sources'
-                withCredentials([usernamePassword(credentialsId: 'JenkinsAPI', passwordVariable: 'JENKINS_API_PWD', usernameVariable: 'JENKINS_API_USER')]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                 sh '''
                     export JOB_CMAKE='${JOB_CMAKE}'
                     export COMPILER='${COMPILER}'
