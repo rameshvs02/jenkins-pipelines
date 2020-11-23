@@ -83,7 +83,7 @@ pipeline {
                                     if [ \$(docker ps -q | wc -l) -ne 0 ]; then
                                         docker ps -q | xargs docker stop --time 1 || :
                                     fi
-                                    ./pxb/docker/run-build-pxb80 ${DOCKER_OS}
+                                    ./pxb/jenkins/run-build-pxb80 ${DOCKER_OS}
                                 " 2>&1 | tee build.log
 
                                 if [[ -f \$(ls pxb/sources/pxb80/results/*.tar.gz | head -1) ]]; then
