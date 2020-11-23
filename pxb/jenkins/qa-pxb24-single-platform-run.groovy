@@ -15,8 +15,7 @@ pipeline {
         choice(
             choices: 'min-xenial-x64',
             description: 'OS version for compilation',
-            name: 'OS_LABEL'
-            type: 'label-expression')
+            name: 'OS_LABEL')
         choice(
             choices: 'xtradb57',
             description: 'MySQL version for QA run',
