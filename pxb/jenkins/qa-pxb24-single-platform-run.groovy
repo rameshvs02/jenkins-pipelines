@@ -15,7 +15,8 @@ pipeline {
         choice(
             choices: 'min-xenial-x64',
             description: 'OS version for compilation',
-            name: 'OS_LABEL')
+            name: 'OS_LABEL'
+            type: 'label-expression')
         choice(
             choices: 'xtradb57',
             description: 'MySQL version for QA run',
@@ -63,7 +64,7 @@ pipeline {
     stages {
         stage('Ubuntu Xenial') {
             agent {
-                    label '$OS_LABEL'
+                    label OS_LABEL
                   }
             steps {
                 git branch: 'master', url: 'https://github.com/rameshvs02/jenkins-pipelines'

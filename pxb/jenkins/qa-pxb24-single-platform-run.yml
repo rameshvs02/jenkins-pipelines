@@ -32,6 +32,7 @@
         description: "./run.sh options, for options like: -j N Run tests in N parallel processes, -T seconds, -x options  Extra options to pass to xtrabackup"
     - choice:
         name: OS_LABEL
+        type: label-expression
         choices:
         - "min-xenial-x64"
         description: Choose OS platform to run the test.
