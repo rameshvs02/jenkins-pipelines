@@ -70,24 +70,21 @@ pipeline {
                 echo 'Checkout PXB24 sources'
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                 sh '''
-                    echo ${JOB_CMAKE}
-                    echo $JOB_CMAKE
-                    exit 1
-                    export JOB_CMAKE='${JOB_CMAKE}'
-                    export COMPILER='${COMPILER}'
-                    export CMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}'
-                    export CMAKE_OPTS='${CMAKE_OPTS}'
-                    export MAKE_OPTS='${MAKE_OPTS}'
-                    export BUILD_COMMENT='${BUILD_COMMENT}'
-                    export TAG='${TAG}'
-                    export DIST_NAME='${DIST_NAME}'
-                    export SSL_VER='${SSL_VER}'
-                    export CMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}'
-                    export ANALYZER_OPTS='${ANALYZER_OPTS}'
-                    export XBTR_ARGS='${XBTR_ARGS}'
-                    export XTRABACKUP_TARGET='${XTRABACKUP_TARGET}'
-                    export XTRABACKUP_TARGET_VERSION='${XTRABACKUP_TARGET_VERSION}'
-                    export BOOTSTRAP_URL='${BOOTSTRAP_URL}'
+                    export ${JOB_CMAKE}
+                    export ${COMPILER}
+                    export ${CMAKE_BUILD_TYPE}
+                    export ${CMAKE_OPTS}
+                    export ${MAKE_OPTS}
+                    export ${BUILD_COMMENT}
+                    export ${TAG}
+                    export ${DIST_NAME}
+                    export ${SSL_VER}
+                    export ${CMAKE_BUILD_TYPE}
+                    export ${ANALYZER_OPTS}
+                    export ${XBTR_ARGS}
+                    export ${XTRABACKUP_TARGET}
+                    export ${XTRABACKUP_TARGET_VERSION}
+                    export ${BOOTSTRAP_URL}
 
                     # sudo is needed for better node recovery after compilation failure
                     # if building failed on compilation stage directory will have files owned by docker user
