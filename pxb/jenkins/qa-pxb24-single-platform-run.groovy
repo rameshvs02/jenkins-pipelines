@@ -70,16 +70,124 @@ pipeline {
                 echo 'Checkout PXB24 sources'
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                 sh '''
-                    # sudo is needed for better node recovery after compilation failure
-                    # if building failed on compilation stage directory will have files owned by docker user
-                    sudo git reset --hard
-                    sudo git clean -xdf
-                    sudo rm -rf sources
-                    ./pxb/jenkins/checkout PXB24
-                    mkdir $PWD/pxb/sources/pxb24/results
-                    bash -x ./pxb/jenkins/build-binary-pxb24 $PWD/pxb/sources/pxb24/results $PWD/pxb/sources/pxb24
-                    bash -x ./pxb/jenkins/test-binary-pxb24  $PWD/pxb/sources/pxb24/results
-                    sudo chown -R $(id -u):$(id -g) $PWD/pxb/sources/pxb24/results $PWD/pxb/sources/pxb24/pxb24/storage/innobase/xtrabackup/src $PWD/pxb/sources/pxb24/pxb24/mysql-test
+                   if [ -f /usr/bin/yum ]; then
+                       sudo -E yum -y erase percona-release || true
+                       sudo find /etc/yum.repos.d/ -iname 'percona*' -delete
+                       until sudo -E yum -y install epel-release; do
+                           sudo yum clean all
+                           sleep 1
+                           echo "waiting"
+                       done
+                       until sudo -E yum -y makecache; do
+                           sudo yum clean all
+                           sleep 1
+                           echo "waiting"
+                       done
+
+                       RHEL=$(rpm --eval %rhel)
+                       sudo yum -y install wget
+                       PKGLIST="libcurl-devel cmake make gcc gcc-c++ libev-devel openssl-devel"
+                       PKGLIST="${PKGLIST} libaio-devel perl-DBD-MySQL vim-common ncurses-devel readline-devel"
+                       PKGLIST="${PKGLIST} zlib-devel libgcrypt-devel bison perl-Digest-MD5"
+                       PKGLIST="${PKGLIST} socat numactl-libs numactl"
+
+                       if [[ ${RHEL} != 8 ]]; then
+                           PKGLIST+=" python-sphinx python-docutils"
+                       else
+                           PKGLIST+=" python3-pip python3-setuptools python3-wheel wget ncurses-compat-libs lz4 lz4-devel"
+                       fi
+
+                       if [[ ${RHEL} -eq 6 ]]; then
+                           sudo wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
+                           sudo wget -O /etc/pki/rpm-gpg/RPM-GPG-KEY-cern https://raw.githubusercontent.com/cms-sw/cms-docker/master/slc6/RPM-GPG-KEY-cern
+                           PKGLIST+=" devtoolset-2-gcc-c++ devtoolset-2-binutils"
+                           PKGLIST+=" devtoolset-2-libasan-devel"
+                           PKGLIST+=" devtoolset-2-valgrind devtoolset-2-valgrind-devel"
+                       fi
+
+                       until sudo -E yum -y install ${PKGLIST}; do
+                           echo "waiting"
+                           sleep 1
+                       done
+
+                       if [[ ${RHEL} -eq 8 ]]; then
+                           sudo /usr/bin/pip3 install sphinx
+                           sudo ln -sf /bin/python3 /bin/python
+                       fi
+                   fi
+                   #
+                   if [ -f /usr/bin/apt-get ]; then
+
+                       sudo rm -f /etc/apt/sources.list.d/percona-dev.list
+                       #
+                       until sudo -E apt-get update; do
+                           sleep 1
+                           echo "waiting"
+                       done
+                       #
+                       until sudo -E apt-get -y install lsb-release; do
+                           sleep 1
+                           echo "waiting"
+                       done
+                       #
+                       sudo -E apt-get -y purge eatmydata || true
+                       #
+                       DIST=$(lsb_release -sc)
+
+                       if [[ "$DIST" != 'focal' ]]; then
+                           echo "deb http://jenkins.percona.com/apt-repo/ ${DIST} main" | sudo tee /etc/apt/sources.list.d/percona-dev.list
+                           wget -q -O - http://jenkins.percona.com/apt-repo/8507EFA5.pub | sudo apt-key add -
+                           wget -q -O - http://jenkins.percona.com/apt-repo/CD2EFD2A.pub | sudo apt-key add -
+                       fi
+
+                       until sudo -E apt-get update; do
+                           sleep 1
+                           echo "waiting"
+                       done
+                       #
+                       PKGLIST="bison cmake devscripts debconf debhelper automake bison ca-certificates libcurl4-openssl-dev"
+                       PKGLIST="${PKGLIST} cmake debhelper libaio-dev libncurses-dev libssl-dev libtool libz-dev"
+                       PKGLIST="${PKGLIST} libgcrypt-dev libev-dev lsb-release python-docutils"
+                       PKGLIST="${PKGLIST} build-essential rsync libdbd-mysql-perl libnuma1 socat librtmp-dev"
+                       if [[ "$DIST" == 'focal' ]]; then
+                           PKGLIST="${PKGLIST} python3-sphinx"
+                       else
+                           PKGLIST="${PKGLIST} python-sphinx"
+                       fi
+
+                       if [[ "$Host" == *"asan" ]] ; then
+                           PKGLIST="${PKGLIST} libasan4 pkg-config"
+                       fi
+                       until sudo -E DEBIAN_FRONTEND=noninteractive apt-get -y install ${PKGLIST}; do
+                           sleep 1
+                           echo "waiting"
+                       done
+                       #
+                       sudo -E apt-get -y install libreadline6 || true
+                       sudo -E apt-get -y install libreadline6-dev || true
+                       if [ -e /lib/x86_64-linux-gnu/libreadline.so.7 -a ! -e /lib/x86_64-linux-gnu/libreadline.so.6 ]; then
+                           sudo ln -s /lib/x86_64-linux-gnu/libreadline.so.7 /lib/x86_64-linux-gnu/libreadline.so.6
+                       fi
+
+                       if [ -e /lib/x86_64-linux-gnu/libreadline.so -a ! -e /lib/x86_64-linux-gnu/libreadline.so.6 ]; then
+                           sudo ln -s /lib/x86_64-linux-gnu/libreadline.so /lib/x86_64-linux-gnu/libreadline.so.6
+                       fi
+
+                       if [[ ${DIST} == 'focal' ]]; then
+                           sudo ln -sf /usr/bin/python3 /usr/bin/python
+                       fi
+
+                   fi
+                   # sudo is needed for better node recovery after compilation failure
+                   # if building failed on compilation stage directory will have files owned by docker user
+                   sudo git reset --hard
+                   sudo git clean -xdf
+                   sudo rm -rf sources
+                   ./pxb/jenkins/checkout PXB24
+                   mkdir $PWD/pxb/sources/pxb24/results
+                   bash -x ./pxb/jenkins/build-binary-pxb24 $PWD/pxb/sources/pxb24/results $PWD/pxb/sources/pxb24
+                   bash -x ./pxb/jenkins/test-binary-pxb24  $PWD/pxb/sources/pxb24/results
+                   sudo chown -R $(id -u):$(id -g) $PWD/pxb/sources/pxb24/results $PWD/pxb/sources/pxb24/pxb24/storage/innobase/xtrabackup/src $PWD/pxb/sources/pxb24/pxb24/mysql-test
                 '''
                 }
                 step([$class: 'JUnitResultArchiver', testResults: 'pxb/sources/pxb24/results/*.xml', healthScaleFactor: 1.0])
