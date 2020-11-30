@@ -187,7 +187,7 @@ pipeline {
                    mkdir $PWD/pxb/sources/pxb24/results
                    bash -x ./pxb/jenkins/build-binary-pxb24 $PWD/pxb/sources/pxb24/results $PWD/pxb/sources/pxb24
                    bash -x ./pxb/jenkins/test-binary-pxb24  $PWD/pxb/sources/pxb24/results
-                   sudo chown -R $(id -u):$(id -g) $PWD/pxb/sources/pxb24/results $PWD/pxb/sources/pxb24/pxb24/storage/innobase/xtrabackup/src $PWD/pxb/sources/pxb24/pxb24/mysql-test
+                   sudo chown -R $(id -u):$(id -g) $PWD/pxb/sources/pxb24/results $PWD/pxb/sources/pxb24/storage/innobase/xtrabackup/src $PWD/pxb/sources/pxb24/mysql-test
                 '''
                 }
                 step([$class: 'JUnitResultArchiver', testResults: 'pxb/sources/pxb24/results/*.xml', healthScaleFactor: 1.0])
