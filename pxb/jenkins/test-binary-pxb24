@@ -19,7 +19,7 @@ WORKSPACE=$(
 
 rm -fr ${WORKSPACE}/PXB
 mkdir -p ${WORKSPACE}/PXB
-tar -C ${WORKSPACE}/PXB --strip-components=1 -zxpf $(ls $WORKSPACE/pxb24.tar.gz | head -1)
+tar -C ${WORKSPACE}/PXB --strip-components=1 -zxpf $(ls $WORKSPACE/*.tar.gz | head -1)
 
 # CentOS 6 & 7
 if [[ -f /opt/rh/devtoolset-7/enable ]]; then
