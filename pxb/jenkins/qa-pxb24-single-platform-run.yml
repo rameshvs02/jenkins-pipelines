@@ -46,7 +46,7 @@
           name: XTRABACKUP_TARGET_VERSION
           trim: false
     - string:
-        default: ''
+        default: 'https://raw.githubusercontent.com/percona/percona-xtrabackup/2.4/storage/innobase/xtrabackup/test/bootstrap.sh'
         description: 'Pass an URL for downloading bootstrap.sh, If empty will use from repository you specified in PXB24_REPO'
         name: BOOTSTRAP_URL
         trim: false
