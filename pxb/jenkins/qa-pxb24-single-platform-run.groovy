@@ -70,6 +70,9 @@ pipeline {
                 echo 'Checkout PXB24 sources'
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                 sh '''
+                    echo ${JOB_CMAKE}
+                    echo $JOB_CMAKE
+                    exit 1
                     export JOB_CMAKE='${JOB_CMAKE}'
                     export COMPILER='${COMPILER}'
                     export CMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}'
