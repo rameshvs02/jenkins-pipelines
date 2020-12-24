@@ -51,7 +51,7 @@ pipeline {
             description: './run.sh options, for options like: -j N Run tests in N parallel processes, -T seconds, -x options  Extra options to pass to xtrabackup',
             name: 'XBTR_ARGS')
         password(
-            defaultValueAsSecret: '',
+            defaultValueAsSecret: "",
             description: 'xbcloud pass',
             name: 'XBCLOUD_PASS')
     }
