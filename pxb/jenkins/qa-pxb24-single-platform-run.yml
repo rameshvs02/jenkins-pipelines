@@ -50,6 +50,11 @@
         description: 'Pass an URL for downloading bootstrap.sh, If empty will use from repository you specified in PXB24_REPO'
         name: BOOTSTRAP_URL
         trim: false
+    - password:
+        default: 'Test@123'
+        description: 'xbcloud pass'
+        name: XBCLOUD_PASS
+        trim: false
     axes:
       - axis:
          type: user-defined
