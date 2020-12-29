@@ -71,6 +71,8 @@ else
     ./bootstrap.sh --type=${XTRABACKUP_TARGET} --version=${XTRABACKUP_TARGET_VERSION}
 fi
 
+echo $XBCLOUD_CREDENTIALS
+
 ./run.sh $XTRABACKUP_TARGET ${XBTR_ARGS} -f | tee ${WORKSPACE}/xbtr.output
 sudo cp -r ${TEST_DIR}/results ${WORKSPACE}
 cp test_results.subunit ${WORKSPACE}

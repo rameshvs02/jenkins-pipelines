@@ -50,10 +50,6 @@ pipeline {
             defaultValue: '-j 2',
             description: './run.sh options, for options like: -j N Run tests in N parallel processes, -T seconds, -x options  Extra options to pass to xtrabackup',
             name: 'XBTR_ARGS')
-        string(
-            defaultValue: '',
-            description: 'xbcloud pass',
-            name: 'XBCLOUD_PASS')
     }
     agent {
         label 'micro-amazon'
@@ -74,10 +70,7 @@ pipeline {
                 echo 'Checkout PXB24 sources'
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: '24e68886-c552-4033-8503-ed85bbaa31f3', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                 sh '''
-                   echo ".........."
-                   echo $XBCLOUD_PASS
-                   echp "..........."
-                   exit 1
+                   echo ""
                    if [ -f /usr/bin/yum ]; then
                        sudo -E yum -y erase percona-release || true
                        sudo find /etc/yum.repos.d/ -iname 'percona*' -delete
