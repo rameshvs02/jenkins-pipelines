@@ -1,4 +1,4 @@
-- job:
+more_test_arguments- job:
     name: percona-xtrabackup-2.4-param-medium
     node: master
     axes:
