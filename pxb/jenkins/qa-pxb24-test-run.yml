@@ -85,6 +85,8 @@
           - RelWithDebInfo
     builders:
     - shell: |
+          #!/bin/bash -xe
+
           if [[ "$XBCLOUD_TYPE" == "aws" ]]; then
               export XBCLOUD_CREDENTIALS="--storage=s3 --s3-access-key=$XBCLOUD_ACCESS_KEY --s3-secret-key=$XBCLOUD_SECRET_KEY $XBCLOUD_EXTRA"
           else
