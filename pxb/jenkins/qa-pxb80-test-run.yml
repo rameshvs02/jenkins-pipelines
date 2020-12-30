@@ -1,17 +1,17 @@
 - job:
-    name: qa-pxb24-test-run
+    name: qa-pxb80-test-run
     project-type: matrix
     description: |
         Do not edit this job through the web!
     concurrent: true
     parameters:
     - string:
-        name: PXB24_REPO
+        name: PXB80_REPO
         default: https://github.com/percona/percona-xtrabackup
-        description: URL to PXB24 repository
+        description: URL to PXB80 repository
     - string:
-        name: PXB24_BRANCH
-        default: percona-xtrabackup-2.4.20
+        name: PXB80_BRANCH
+        default: 8.0
         description: Tag/Branch for PXC repository
     - choice:
         name: JOB_CMAKE
@@ -47,13 +47,13 @@
         - "xtradb57"
         description: Choose MySQL version to run the test.
     - string:
-          default: '5.7.31-34'
+          default: '8.0.20-11'
           description: Version of MS/PS/PXC Server which will be used for bootstrap.sh script
           name: XTRABACKUP_TARGET_VERSION
           trim: false
     - string:
-        default: 'https://raw.githubusercontent.com/percona/percona-xtrabackup/2.4/storage/innobase/xtrabackup/test/bootstrap.sh'
-        description: 'Pass an URL for downloading bootstrap.sh, If empty will use from repository you specified in PXB24_REPO'
+        default: 'https://raw.githubusercontent.com/percona/percona-xtrabackup/8.0/storage/innobase/xtrabackup/test/bootstrap.sh'
+        description: 'Pass an URL for downloading bootstrap.sh, If empty will use from repository you specified in PXB80_REPO'
         name: BOOTSTRAP_URL
         trim: false
     - choice:
@@ -208,11 +208,11 @@
           sudo git reset --hard
           sudo git clean -xdf
           sudo rm -rf sources
-          ./pxb/jenkins/checkout PXB24
-          mkdir $PWD/pxb/sources/pxb24/results
-          bash -x ./pxb/jenkins/build-binary-pxb24 $PWD/pxb/sources/pxb24/results $PWD/pxb/sources/pxb24
-          bash -x ./pxb/jenkins/test-binary-pxb24  $PWD/pxb/sources/pxb24/results
-          cp $PWD/pxb/sources/pxb24/results/junit.xml ${WORKSPACE}
+          ./pxb/jenkins/checkout PXB80
+          mkdir $PWD/pxb/sources/pxb80/results
+          bash -x ./pxb/jenkins/build-binary-pxb80 $PWD/pxb/sources/pxb80/results $PWD/pxb/sources/pxb80
+          bash -x ./pxb/jenkins/test-binary-pxb80  $PWD/pxb/sources/pxb80/results
+          cp $PWD/pxb/sources/pxb80/results/junit.xml ${WORKSPACE}
 
     wrappers:
     - mask-passwords
